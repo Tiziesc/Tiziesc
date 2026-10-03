@@ -8,7 +8,7 @@ on:
 permissions:
   contents: write
 
-concurrency: ticker
+concurrency: perfil  # misma cola que metrics.yml: nunca empujan a la vez
 
 jobs:
   update:
