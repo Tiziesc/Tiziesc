@@ -48,6 +48,30 @@ def counts(path):
     return name.rsplit(".", 1)[-1].lower() in CODE_EXT | DOC_EXT
 
 
+# Lenguaje de cada extensión, con el color que le da GitHub Linguist. La documentación
+# cuenta para las velas pero no es un lenguaje de programación: no entra acá.
+LANGUAGES = {
+    "py": ("Python", "#3572A5"), "go": ("Go", "#00ADD8"), "ts": ("TypeScript", "#3178c6"),
+    "tsx": ("TypeScript", "#3178c6"), "js": ("JavaScript", "#f1e05a"), "jsx": ("JavaScript", "#f1e05a"),
+    "mjs": ("JavaScript", "#f1e05a"), "cjs": ("JavaScript", "#f1e05a"), "dart": ("Dart", "#00B4AB"),
+    "java": ("Java", "#b07219"), "kt": ("Kotlin", "#A97BFF"), "kts": ("Kotlin", "#A97BFF"),
+    "swift": ("Swift", "#F05138"), "c": ("C", "#555555"), "h": ("C", "#555555"), "cc": ("C++", "#f34b7d"),
+    "cpp": ("C++", "#f34b7d"), "hpp": ("C++", "#f34b7d"), "cs": ("C#", "#178600"), "rs": ("Rust", "#dea584"),
+    "rb": ("Ruby", "#701516"), "php": ("PHP", "#4F5D95"), "scala": ("Scala", "#c22d40"),
+    "sql": ("SQL", "#e38c00"), "sh": ("Shell", "#89e051"), "bash": ("Shell", "#89e051"),
+    "ps1": ("PowerShell", "#012456"), "lua": ("Lua", "#000080"), "r": ("R", "#198CE7"),
+    "jl": ("Julia", "#a270ba"), "vue": ("Vue", "#41b883"), "svelte": ("Svelte", "#ff3e00"),
+    "css": ("CSS", "#663399"), "scss": ("SCSS", "#c6538c"),
+}
+
+
+def language_of(path):
+    if not counts(path):
+        return None
+    ext = path.rsplit(".", 1)[-1].lower()
+    return LANGUAGES.get(ext, (None,))[0]
+
+
 def renamed_target(path):
     """'src/{a => b}/x.py' o 'a.py => b.py' (numstat con renombres) -> ruta nueva."""
     path = re.sub(r"\{[^{}]*? => ([^{}]*)\}", r"\1", path)
@@ -72,12 +96,15 @@ def collect_local(repos, emails, tz, ledger):
                 sha, stamp = line[1:].split(" ", 1)
                 key = commit_key(sha)
                 day = datetime.fromisoformat(stamp).astimezone(tz).date().isoformat()
-                ledger[key] = {"d": day, "a": 0, "r": 0}
+                ledger[key] = {"d": day, "a": 0, "r": 0, "l": {}}
                 continue
             parts = line.split("\t")
             if key and len(parts) == 3 and parts[0] != "-" and counts(renamed_target(parts[2])):
                 ledger[key]["a"] += int(parts[0])
                 ledger[key]["r"] += int(parts[1])
+                lang = language_of(renamed_target(parts[2]))
+                if lang:
+                    ledger[key]["l"][lang] = ledger[key]["l"].get(lang, 0) + int(parts[0])
 
 
 API = "https://api.github.com"
@@ -122,9 +149,11 @@ def collect_api(login, token, tz, ledger, excluded):
         new = 0
         for c in paginate(f"{API}/repos/{full}/commits?author={login}&per_page=100", token):
             key = commit_key(c["sha"])
-            if len(c["parents"]) > 1 or key in ledger:
+            # Un commit procesado antes de que existiera el desglose por lenguaje se vuelve a leer
+            if len(c["parents"]) > 1 or "l" in ledger.get(key, {}):
                 continue
             adds = dels = 0
+            langs = {}
             page = 1
             while True:  # la API pagina los archivos de un commit de a 300
                 detail, _ = gh(f"{API}/repos/{full}/commits/{c['sha']}?page={page}", token)
@@ -133,11 +162,14 @@ def collect_api(login, token, tz, ledger, excluded):
                     if counts(f["filename"]):
                         adds += f["additions"]
                         dels += f["deletions"]
+                        lang = language_of(f["filename"])
+                        if lang:
+                            langs[lang] = langs.get(lang, 0) + f["additions"]
                 if len(files) < 300:
                     break
                 page += 1
             stamp = datetime.fromisoformat(c["commit"]["author"]["date"].replace("Z", "+00:00"))
-            ledger[key] = {"d": stamp.astimezone(tz).date().isoformat(), "a": adds, "r": dels}
+            ledger[key] = {"d": stamp.astimezone(tz).date().isoformat(), "a": adds, "r": dels, "l": langs}
             new += 1
         print(f"  {new:4d} commits nuevos", file=sys.stderr)
 
@@ -388,6 +420,69 @@ def render(bars, avg, marks, theme, tf):
     return "\n".join(out)
 
 
+# ---------------------------------------------------------------- lenguajes
+
+LANG_TOP = 5  # cinco lenguajes y el resto en «Otros» (AV-41)
+
+
+def language_totals(ledger):
+    totals = {}
+    for v in ledger.values():
+        for lang, n in v.get("l", {}).items():
+            totals[lang] = totals.get(lang, 0) + n
+    ranked = sorted(((n, lang) for lang, n in totals.items() if n > 0), reverse=True)
+    items = [(lang, n) for n, lang in ranked[:LANG_TOP]]
+    rest = sum(n for n, _ in ranked[LANG_TOP:])
+    if rest:
+        items.append(("Otros", rest))
+    return items
+
+
+def render_languages(items, commits, asof, theme):
+    t = THEMES[theme]
+    colors = {name: color for name, color in LANGUAGES.values()}
+    total = sum(n for _, n in items)
+    rows = -(-len(items) // 2)
+    col_w = (W - 32) / 2
+    h = 72 + (rows - 1) * 24 + 12
+    pct = [f"{n / total * 100:.1f} %".replace(".", ",") for _, n in items]
+    out = []
+    add = out.append
+
+    add(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {h}" width="{W}" height="{h}" '
+        f'font-family="{FONT}" role="img" aria-labelledby="ttl">')
+    summary = ", ".join(f"{name} {p}" for (name, _), p in zip(items, pct))
+    add(f'<title id="ttl">Lenguajes más escritos: {summary}</title>')
+    add('<style>text{font-variant-numeric:tabular-nums}</style>')
+    add(f'<text x="0" y="20" font-size="{FS_BASE}" fill="{t["text"]}"><tspan font-weight="600">Lenguajes</tspan>'
+        f'<tspan dx="12" font-size="{FS_SMALL}" fill="{t["muted"]}">{num(total)} líneas agregadas en {commits} commits '
+        f'de repos públicos y privados · al {asof:%d/%m/%Y}</tspan></text>')
+
+    # barra apilada: un segmento por lenguaje, separados por 2 px de aire
+    add(f'<defs><clipPath id="bar"><rect y="36" width="{W}" height="8" rx="4"/></clipPath></defs><g clip-path="url(#bar)">')
+    x = 0.0
+    for i, (name, n) in enumerate(items):
+        w = n / total * W
+        gap = 2 if i < len(items) - 1 else 0
+        add(f'<rect x="{x:.1f}" y="36" width="{max(0.5, w - gap):.1f}" height="8" '
+            f'fill="{colors.get(name, t["neutral"])}"/>')
+        x += w
+    add('</g>')
+
+    # lista en dos columnas, primero la de la izquierda
+    for i, ((name, n), p) in enumerate(zip(items, pct)):
+        col, row = divmod(i, rows)
+        x0, y0 = col * (col_w + 32), 72 + row * 24
+        add(f'<circle cx="{x0 + 4}" cy="{y0 - 4.5}" r="4" fill="{colors.get(name, t["neutral"])}"/>')
+        add(f'<text x="{x0 + 16}" y="{y0}" font-size="{FS_SMALL}" fill="{t["text"]}">{name}</text>')
+        add(f'<text x="{x0 + col_w - 64:.1f}" y="{y0}" font-size="{FS_SMALL}" text-anchor="end" '
+            f'fill="{t["muted"]}">{num(n)} líneas</text>')
+        add(f'<text x="{x0 + col_w:.1f}" y="{y0}" font-size="{FS_SMALL}" font-weight="500" text-anchor="end" '
+            f'fill="{t["text"]}">{p}</text>')
+    add('</svg>')
+    return "\n".join(out)
+
+
 # ---------------------------------------------------------------- CLI
 
 def main():
@@ -440,6 +535,15 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     for theme in THEMES:
         (out / f"ticker-{theme}.svg").write_text(render(shown, shown_avg, shown_marks, theme, tf), encoding="utf-8")
+
+    items = language_totals(ledger)
+    if items:
+        with_langs = [v for v in ledger.values() if sum(v.get("l", {}).values())]
+        asof = date.fromisoformat(max(v["d"] for v in with_langs))
+        for theme in THEMES:
+            svg = render_languages(items, len(with_langs), asof, theme)
+            (out / f"languages-{theme}.svg").write_text(svg, encoding="utf-8")
+        print(f"lenguajes: {items}", file=sys.stderr)
     print(f"{len(shown)} velas {tf}, cierre {num(bars[-1]['c'])}, patrones {shown_marks}", file=sys.stderr)
 
 
