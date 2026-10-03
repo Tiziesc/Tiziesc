@@ -1,0 +1,30 @@
+name: Gráfico de líneas escritas
+
+on:
+  schedule:
+    - cron: "0 6 * * *"  # 03:00 en Argentina
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency: ticker
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Generar el gráfico
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+        run: python3 scripts/ticker.py api --login "${{ github.repository_owner }}"
+
+      - name: Publicar si cambió
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add charts data
+          git diff --cached --quiet || git commit -m "Actualizar el gráfico de líneas escritas"
+          git push
