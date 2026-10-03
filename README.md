@@ -4,11 +4,8 @@ Construyo sistemas distribuidos y webs. Gestiono su ciclo de vida priorizando ar
 
 ---
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="charts/ticker-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="charts/ticker-light.svg">
-  <img alt="Gráfico de velas de las líneas netas de código y documentación escritas por sesión" src="charts/ticker-light.svg" width="100%">
-</picture>
+![Gráfico de velas de las líneas netas de código y documentación escritas por sesión](charts/ticker-light.svg#gh-light-mode-only)
+![Gráfico de velas de las líneas netas de código y documentación escritas por sesión](charts/ticker-dark.svg#gh-dark-mode-only)
 
 <details>
 <summary><b>Cómo se lee</b></summary>
