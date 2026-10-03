@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: "30 6 * * *"  # 03:30 en Argentina, después del gráfico de líneas
   workflow_dispatch:
+  push:  # un cambio en el script o en los workflows regenera los gráficos al subirlo
+    branches: [main]
+    paths: ["scripts/**", ".github/workflows/**"]
 
 permissions:
   contents: write
