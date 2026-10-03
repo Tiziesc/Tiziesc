@@ -27,18 +27,19 @@ jobs:
           base: ""
           config_display: large
           config_timezone: America/Argentina/Buenos_Aires
-          config_order: habits, stargazers, topics
+          config_order: languages, stargazers, topics
 
-          # Los lenguajes los calcula scripts/ticker.py: esta action ignora los repos privados
-          # (lowlighter/metrics#1072). Repos propios y de colaboración, con los nombres con que firmás los commits
+          # Repos propios y de colaboración, públicos y privados
           repositories_affiliations: owner, collaborator
-          commits_authoring: Tiziesc, Tiziano Escalante
 
-          plugin_habits: yes
-          plugin_habits_from: 200
-          plugin_habits_days: 30
-          plugin_habits_facts: yes
-          plugin_habits_charts: yes
+          # Peso en bytes que GitHub calcula para cada repo, como en el original.
+          # Sin plugin_languages_indepth: ese modo ignora los repos privados (lowlighter/metrics#1072)
+          plugin_languages: yes
+          plugin_languages_details: bytes-size, percentage
+          plugin_languages_limit: 8
+
+          # Sin plugin_habits: GitHub ya no manda los commits en los eventos de push
+          # y el plugin falla siempre con «Unexpected error»
 
           plugin_stargazers: yes
 
