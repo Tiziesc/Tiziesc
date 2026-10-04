@@ -5,4 +5,4 @@
 ---
 ![Lenguajes más usados, estrellas y tecnologías](charts/metrics.svg)
 ---
-[![My Skills](https://skillicons.dev/icons?i=js,html,css,wasm)](https://skillicons.dev)
+[![My Skills](https://skillicons.dev/icons?i=dart,go,c++,typescript,javascript,react,python)](https://skillicons.dev)
