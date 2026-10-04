@@ -8,6 +8,6 @@
 [![My Skills](https://skillicons.dev/icons?i=dart,go,c++,typescript,javascript,react,python)](https://skillicons.dev)
 <p align="center">
   <a href="https://skillicons.dev">
-    <img src="https://skillicons.dev/icons?i=dart,go,cpp,typescript,javascript,react,python" />
+    <img src="https://skillicons.dev/icons?i=dart,go,cpp,nodejs,typescript,javascript,react,flutter,python" />
   </a>
 </p>
