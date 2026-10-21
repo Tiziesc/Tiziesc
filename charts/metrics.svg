@@ -21,14 +21,14 @@
                         <rect x="0" y="0" width="920" height="8" fill="white" rx="5"/>
                     </mask>
                     <rect mask="url(#languages-bar)" x="0" y="0" width="0" height="8" fill="#d1d5da"/>
-                    <rect mask="url(#languages-bar)" x="0" y="0" width="530.5217922924634" height="8" fill="#00ADD8"/>
-                    <rect mask="url(#languages-bar)" x="530.5217922924634" y="0" width="175.12060948221082" height="8" fill="#3178c6"/>
-                    <rect mask="url(#languages-bar)" x="705.6424017746741" y="0" width="79.67407337736373" height="8" fill="#e34c26"/>
-                    <rect mask="url(#languages-bar)" x="785.3164751520379" y="0" width="72.42535173464309" height="8" fill="#3572A5"/>
-                    <rect mask="url(#languages-bar)" x="857.741826886681" y="0" width="25.014441021217635" height="8" fill="#00B4AB"/>
-                    <rect mask="url(#languages-bar)" x="882.7562679078986" y="0" width="23.691934821557613" height="8" fill="#336790"/>
-                    <rect mask="url(#languages-bar)" x="906.4482027294563" y="0" width="11.248689526072983" height="8" fill="#f34b7d"/>
-                    <rect mask="url(#languages-bar)" x="917.6968922555293" y="0" width="2.303107744470775" height="8" fill="#89e051"/>
+                    <rect mask="url(#languages-bar)" x="0" y="0" width="530.3559461795788" height="8" fill="#00ADD8"/>
+                    <rect mask="url(#languages-bar)" x="530.3559461795788" y="0" width="175.0658651290277" height="8" fill="#3178c6"/>
+                    <rect mask="url(#languages-bar)" x="705.4218113086065" y="0" width="79.64916651103084" height="8" fill="#e34c26"/>
+                    <rect mask="url(#languages-bar)" x="785.0709778196374" y="0" width="72.69031155879445" height="8" fill="#3572A5"/>
+                    <rect mask="url(#languages-bar)" x="857.7612893784318" y="0" width="25.006621271172264" height="8" fill="#00B4AB"/>
+                    <rect mask="url(#languages-bar)" x="882.767910649604" y="0" width="23.68452849941599" height="8" fill="#336790"/>
+                    <rect mask="url(#languages-bar)" x="906.45243914902" y="0" width="11.245173079698777" height="8" fill="#f34b7d"/>
+                    <rect mask="url(#languages-bar)" x="917.6976122287188" y="0" width="2.302387771281127" height="8" fill="#89e051"/>
                 </svg>
                 <div class="row fill-width">
                     <section>
@@ -41,7 +41,7 @@
                             </div>
                             <small>
                                 <div>4.02 MB</div>
-                                <div>57.67%</div>
+                                <div>57.65%</div>
                             </small>
                         </div>
                         <div class="field language details">
@@ -79,7 +79,7 @@
                             </div>
                             <small>
                                 <div>179 kB</div>
-                                <div>2.58%</div>
+                                <div>2.57%</div>
                             </small>
                         </div>
                     </section>
@@ -118,8 +118,8 @@
                                 Python
                             </div>
                             <small>
-                                <div>549 kB</div>
-                                <div>7.87%</div>
+                                <div>551 kB</div>
+                                <div>7.9%</div>
                             </small>
                         </div>
                         <div class="field language details">
@@ -151,13 +151,8 @@
                             <div class="entry">
                                 <span class="value">2</span>
                                 <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
-                                7
-                                <div class="bottom">Oct.</div>
-                            </div>
-                            <div class="entry">
-                                <span class="value"></span>
-                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 8
+                                <div class="bottom">Oct.</div>
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
@@ -218,6 +213,11 @@
                                 <span class="value"></span>
                                 <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
                                 20
+                            </div>
+                            <div class="entry">
+                                <span class="value"></span>
+                                <div class="bar" style="height: 2.5px; background-color: var(--color-calendar-graph-day-L1-bg)"></div>
+                                21
                             </div>
                         </div>
                     </section>
@@ -227,13 +227,8 @@
                             <div class="entry">
                                 <span class="value"></span>
                                 <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
-                                7
-                                <div class="bottom">Oct.</div>
-                            </div>
-                            <div class="entry">
-                                <span class="value"></span>
-                                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
                                 8
+                                <div class="bottom">Oct.</div>
                             </div>
                             <div class="entry">
                                 <span class="value"></span>
@@ -294,6 +289,11 @@
                                 <span class="value"></span>
                                 <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
                                 20
+                            </div>
+                            <div class="entry">
+                                <span class="value"></span>
+                                <div class="bar" style="height: 0px; background-color: var(--color-calendar-graph-day-L0-bg)"></div>
+                                21
                             </div>
                         </div>
                     </section>
